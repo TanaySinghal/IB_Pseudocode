@@ -1,0 +1,13 @@
+
+Examples of what you can enter:
+
+//You can’t see this hahaha
+
+Math operations:
+	3233+12
+	3233-12
+	3233*12
+	3233/12
+	3233^12
+More:
+	quit

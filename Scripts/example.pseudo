@@ -1,0 +1,50 @@
+X = 0
+Y = 0
+
+output "Before X: " + X
+output "Before Y: " + Y
+
+COUNT = 0
+
+loop while COUNT < 6
+	X = X + COUNT
+	Y = Y + X
+	if COUNT > 3 then
+		output ""
+		output "COUNT: " + COUNT
+		output "X: " + X
+		output "Y: " + Y
+	end if
+	COUNT = COUNT + 1
+end loop
+
+output ""
+output "Now X: " + X
+output "Now Y: " + Y
+
+output ""
+output "NOW DOING FOR LOOP"
+output ""
+
+X = 0
+Y = 0
+
+output "Before X: " + X
+output "Before Y: " + Y
+
+COUNT = 0
+
+loop COUNT from 0 to 5
+	X = X + COUNT
+	Y = Y + X
+	if COUNT > 3 then
+		output ""
+		output "COUNT: " + COUNT
+		output "X: " + X
+		output "Y: " + Y
+	end if
+end loop
+
+output ""
+output "Now X: " + X
+output "Now Y: " + Y
