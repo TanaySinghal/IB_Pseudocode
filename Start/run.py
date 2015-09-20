@@ -166,19 +166,11 @@ class Interpreter(object):
 
 
 def main():
-    print "read text file (y or n)"
-    enterShell = raw_input('>> ')
-    enterShell = enterShell.lower()
-    if enterShell == "n":
-        doShell()
-        return
 
-    if enterShell == "y":
-        readFile()
-        return
+    readFile()
+    return
 
-    else:
-        print "This input is not valid..."
+    print "This input is not valid..."
 
 def preFormatCode(lines):
     lines = [i.replace("\t", "") for i in lines]
@@ -205,13 +197,31 @@ _to = ""
 _from = ""
 _condition = ""
 
+
 def readFile():
     #JUST INITIALIZING
 
-    print "Type name of file to run."
-    fileName = raw_input('run ')
-    fileName = fileName + ".pseudo"#fileName.lower()
-    filePath = "../Scripts/" + fileName
+    #Get file path
+    filePath = ""
+    while True:
+        print "Type name of file to run."
+        fileName = raw_input('>> run ')
+
+        if fileName == "quit":
+            return
+            
+        if fileName == "shell":
+            doShell()
+            return
+
+        if not "." in fileName:
+            fileName = fileName + ".pseudo"
+            filePath = "../Scripts/" + fileName
+            break
+        else:
+            print "Please enter plain file name without specifying file format\n"
+            continue
+
 
     #split by line number
     codeFile = open(filePath)
