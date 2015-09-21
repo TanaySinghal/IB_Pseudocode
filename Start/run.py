@@ -4,7 +4,7 @@
 # there is no more input left for lexical analysis
 EOF, NULL, INTEGER = 'EOF', 'NULL', 'INTEGER'
 VARIABLE, CODE = 'VARIABLE', 'CODE'
-PLUS, MINUS, TIMES, DIVIDE, EXP = 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EXP'
+PLUS, MINUS, TIMES, DIVIDE, EXP, MOD = 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EXP', 'MOD'
 
 endProgram = False
 inShell = False
@@ -79,10 +79,21 @@ class Interpreter(object):
             return token
 
         if isOperator(current_char):
+            #this only works with one character
             operatorType = mapOperatorToToken(current_char)
             token = Token(operatorType, current_char)
             self.pos += 1
             return token
+
+        if current_char == "m":
+            _startPos = self.pos
+            _endPos = self.pos + 3
+            _operator = text[_startPos:_endPos]
+            if _operator == "mod":
+                operatorType = mapOperatorToToken(_operator)
+                token = Token(operatorType, _operator)
+                self.pos += 3
+                return token
 
         printError("Could not recognize character: " + current_char)
         #self.error()
@@ -100,23 +111,24 @@ class Interpreter(object):
 
     #TODO: This method needs cleaning up
     def readValue(self):
-        #if var name is not empty, find it in list of vars
-        #var = getVariable(_varName)
+
         _varName = ""
+        #get variable name
         while self.current_token.type == "VARIABLE":
             _varName += self.current_token.value
             self.eat(VARIABLE)
 
+        #if variable exists, read its value and return it as a token
         if _varName != "":
             var = getVariable(_varName)
             _token = Token(var['type'], var['value'])
             return _token
 
         #If the there is no variable, it must be a number
-        #else:
         _token = self.current_token
         self.eat(INTEGER)
 
+        #Allows multiple digit numbers
         while self.current_token.type == "INTEGER":
             _token.value *= 10
             _token.value += self.current_token.value
@@ -135,7 +147,6 @@ class Interpreter(object):
         # if left side is a variable, get variable name
         left = self.readValue()
 
-        # we expect the current token to be a '+' token
         op = self.current_token
         if isTypeOperator(op.type):
             self.eat(self.current_token.type)
@@ -146,21 +157,7 @@ class Interpreter(object):
         # get value of right side digits
         right = self.readValue()
 
-        # after the above call the self.current_token is set to
-        # EOF token
-        
-        #check operator
-
-        if op.type == "PLUS": 
-            result = left.value + right.value
-        elif op.type == "MINUS": 
-            result = left.value - right.value
-        elif op.type == "TIMES": 
-            result = left.value * right.value
-        elif op.type == "DIVIDE": 
-            result = left.value / right.value
-        elif op.type == "EXP": 
-            result = left.value ** right.value
+        result = performOperation(op.type, left.value, right.value)
 
         return result
 
@@ -190,12 +187,6 @@ def preFormatCode(lines):
         lines[i] = "".join(parts)
 
     return lines
-
-#TODO: This cannot be like this...
-_varName = ""
-_to = ""
-_from = ""
-_condition = ""
 
 
 def readFile():
@@ -233,6 +224,11 @@ def readFile():
     global line_number
     #because we increment early, this needs to be -1
     while line_number < len(lines) - 1:
+
+        #if we are within while loop
+        #This needs to be put after loop is created..
+        #Also we need to loop one more time.. not just skip to the end!!
+
         line_number += 1
 
         #get text
@@ -241,6 +237,7 @@ def readFile():
         loop_session = loopBlock(line)
         if loop_session == "continue":
             continue
+
 
         #IF
         current_session = ifStatementBlock(line)
@@ -257,6 +254,10 @@ def readFile():
 
 def doShell():
     print "Entering shell..."
+
+    global inShell
+
+    inShell = True
     while True:
         #READ FILE
         try:
@@ -269,6 +270,7 @@ def doShell():
         if not text:
             continue
         elif text == "quit":
+            inShell = False
             break
         elif text == "help":
             help()
@@ -291,53 +293,66 @@ def doShell():
             break
 
 #MAIN METHODS
+
+#TODO: This cannot be like this for nested loop
+
 def loopBlock(line):
     global line_number
-    global _condition
-    global _varName
-    global _from
-    global _to
 
     if isLoop(line):
         if loopType(line) == "for":
-            print "This is a for loop"
-            _varName, _from, _to = getInfoFromForLoop(line)
+            loopVarName, _from, _to = getInfoFromForLoop(line)
 
-            addForLoopVariable(_varName, _from)
+            #translate for loop condition into while loop condition
+            loopEndcondition = createForLoopCondition(loopVarName, _to)
+
+            createOrSetVariable(loopVarName, _from)
             #correctly adds X=X+1 to session
-            addLoopSession(line_number, "for")
-
+            addLoopSession(line_number, "for", loopVarName, loopEndcondition, False)
             return "continue"
+
         elif loopType(line) == "while":
-            print "This is a while loop"
-            _condition = getInfoFromWhileLoop(line)
-            addLoopSession(line_number, "while")
+            loopEndcondition = getInfoFromWhileLoop(line)
+            #var name field is empty for while
+            addLoopSession(line_number, "while", "", loopEndcondition, False)
             return "continue"
         else:
             printError("This loop is invalid")
             return
 
     elif reachedEndLoop(line):
-        if getLoopType() == "for":
-            if isForLoopOver(_varName, _from, _to):
+        _loopType = getLoopType()
+
+        loopEndcondition = getLoopEndCondition()
+
+        if _loopType == "for":
+            if isLoopOver(loopEndcondition):
                 removeLoopSession()
                 return "continue"
-            else:
+            else:  
+                #line_number is global
                 line_number = getLoopLineBegin()
-                #ERROR: Too hacked.. 
-                createOrSetVariable("COUNT=COUNT+1")
+                loopVarName = getLoopVarName()
+                _increment = loopVarName + "+1"
+                createOrSetVariable(loopVarName, _increment)
                 return "continue"
 
-        if getLoopType() == "while":
-            #ERROR: THIS SHOULD BE AT THE BEGINNING OF SESSION
-            #To make while loop work
-            #possible solution - just subtract 1 from the condition
-            if isWhileLoopOver(_condition):
-                removeLoopSession()
-                return "continue"
+        if _loopType == "while":
+            lastIteration = getLastIteration()
+            if isLoopOver(loopEndcondition):
+                #removeLoopSession()
+                if lastIteration:
+                    removeLoopSession()
+                else:
+                    nowLastIteration()
+                    line_number = getLoopLineBegin()
             else: 
+                #line_number is global
                 line_number = getLoopLineBegin()
-                return "continue"
+            return "continue"
+
+
+        printError("The loop was stored incorrectly. Something went seriously wrong.")
 
 def ifStatementBlock(_text):
 
@@ -438,7 +453,7 @@ def readCode(_text):
     if _inShell:
         if howManySet(_text) == 1:
             #you're not always going to set variables..
-            createOrSetVariable(_text)
+            parseAndCreateOrSetVariable(_text)
 
         #if we are in shell
         elif howManyComparison(_text) == 1:
@@ -457,7 +472,7 @@ def readCode(_text):
     #If we are running a text file
     elif howManySet(_text) == 1:
         #Code reaches up to here
-        createOrSetVariable(_text)
+        parseAndCreateOrSetVariable(_text)
 
 def printError(_errorMessage):
     global endProgram

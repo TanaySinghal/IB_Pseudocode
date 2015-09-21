@@ -3,26 +3,20 @@ from run import *
 #list of dictionaries.. {'type': varType, 'name': varName, 'value': varValue}
 variables = []
 
-#VARIABLE METHODS 
-def createOrSetVariable(_text):
-    #don't split more than once
+#VARIABLE METHODS
+def parseAndCreateOrSetVariable(_text):
     _expressions = _text.split("=", 1)
+    _varName = _expressions[0]
+    _rightSide = _expressions[1]
+    createOrSetVariable(_varName, _rightSide)
 
-    varName = _expressions[0]
-    rightSide = _expressions[1]
-
-    exists = False
-
+def createOrSetVariable(varName, rightSide):
     #Var name must be an upper case word
     if varName.isupper() and varName.isalpha():
 
-
         varType, varValue = interpretVarType(rightSide)
-
         #Check if variable exists
-
         var = getVariable(varName)
-        #TAG TAG TAG THIS IS WHERE THE ERROR IS
         if var is not None:
             var['value'], var['type'] = varValue, varType
             return
@@ -35,10 +29,7 @@ def createOrSetVariable(_text):
     return
 
 def interpretVarType(_value):
-    #two operator at most, one comparison at most, and rest numbers
-    numberCount = len(filter(lambda x: x.isdigit(), _value))
-
-
+    
     #if this is inequality...
     from run import howManyComparison
     from run import howManyOperator
@@ -86,7 +77,4 @@ def getVariable(_myVariableName):
     #Returning none is variable
     return None
 
-
-def addForLoopVariable(_varName, _value):
-    variables.append({'type': "INTEGER", 'name': _varName, 'value': int(_value)})
 #END VARIABLE METHODS

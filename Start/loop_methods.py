@@ -29,13 +29,19 @@ def getInfoFromWhileLoop(_text):
     return _condition
 
 #ACTION METHODS
+def addLoopSession(_line_number, _type, _varName, _endCondition, _lastIteration):
+    _dictionary = {
+        'begin_line_number': _line_number,
+        'type': _type, 
+        'varName': _varName,
+        'endCondition': _endCondition,
+        'lastIteration': _lastIteration
+    }
 
-def addLoopSession(_line_number, _type):
-    _dictionary = {'begin_line_number': _line_number, 'type': _type}
     loopSessions.append(_dictionary)
 
-def removeLoopSession():
-    loopSessions.pop()
+def withinWhileLoop():
+    return len(loopSessions) > 0 and getLoopType() == "while"
 
 def getLoopLineBegin():
     #get last session
@@ -46,21 +52,31 @@ def getLoopType():
     _session = loopSessions[-1]
     return _session['type']
 
-#Add evaluation for loop condition (separate methods)
-def isForLoopOver(_varName, _from, _to):
-    _condition = _varName + "<" + _to
-    from run import comparison
-    _result = comparison(_condition)
-    #ERROR: VarName and To are blank
-    if _result == "true":
-        #continue loop
-        return False
-    if _result == "false":
-        #ends loop
-        return True
-    printError("for loop conditions are not valid")
+def getLoopVarName():
+    _session = loopSessions[-1]
+    return _session['varName']
 
-def isWhileLoopOver(_condition):
+def getLoopEndCondition():
+    _session = loopSessions[-1]
+    return _session['endCondition']
+
+def getLastIteration():
+    _session = loopSessions[-1]
+    return _session['lastIteration']
+
+def nowLastIteration():
+    _session = loopSessions[-1]
+    _session['lastIteration'] = True
+    loopSessions[-1] = _session
+
+def removeLoopSession():
+    loopSessions.pop()
+
+def createForLoopCondition(_varName, _to):
+    return _varName + "<" + _to
+    
+#Evaluation for loop condition
+def isLoopOver(_condition):
     from run import comparison
     _result = comparison(_condition)
     if _result == "true":

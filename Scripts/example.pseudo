@@ -1,15 +1,15 @@
 X = 0
 Y = 0
 
+//WHILE LOOP
 output "Before X: " + X
 output "Before Y: " + Y
 
 COUNT = 0
-
-loop while COUNT < 6
+loop while COUNT < 5
 	X = X + COUNT
 	Y = Y + X
-	if COUNT > 3 then
+	if COUNT >= 3 then
 		output ""
 		output "COUNT: " + COUNT
 		output "X: " + X
@@ -19,25 +19,24 @@ loop while COUNT < 6
 end loop
 
 output ""
-output "Now X: " + X
-output "Now Y: " + Y
+output "After X: " + X
+output "After Y: " + Y
 
 output ""
-output "NOW DOING FOR LOOP"
+output "Now running for loop"
 output ""
 
+//FOR LOOP
 X = 0
 Y = 0
-
 output "Before X: " + X
 output "Before Y: " + Y
-
-COUNT = 0
 
 loop COUNT from 0 to 5
 	X = X + COUNT
 	Y = Y + X
-	if COUNT > 3 then
+	//if count is an odd number
+	if COUNT mod 2 == 0 then
 		output ""
 		output "COUNT: " + COUNT
 		output "X: " + X
@@ -46,5 +45,20 @@ loop COUNT from 0 to 5
 end loop
 
 output ""
-output "Now X: " + X
-output "Now Y: " + Y
+output "After X: " + X
+output "After Y: " + Y
+
+// NESTED FOR LOOP
+X = 0
+output ""
+output "Before X: " + X
+output "Doing nested loop"
+loop I from 1 to 5
+	loop J from 1 to 5
+		if I > 2 then
+			X = X + 1
+		end if
+	end loop
+end loop
+
+output "After X: " + X

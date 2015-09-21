@@ -9,11 +9,28 @@ def comparison(_text):
     #evaluate2
 
     #EVALUATE EXPRESSIONS.....
-    if ">" in _text:
+    if ">=" in _text:
+        #split string from this and compare
+        result1, result2 = calculateTwoExpressions(_text.split(">="))
+
+        if result1 >= result2:
+            return "true"
+        else:
+            return "false"
+
+    elif ">" in _text:
         #split string from this and compare
         result1, result2 = calculateTwoExpressions(_text.split(">"))
 
         if result1 > result2:
+            return "true"
+        else:
+            return "false"
+
+    elif "<=" in _text:
+        result1, result2 = calculateTwoExpressions(_text.split("<="))
+
+        if result1 <= result2:
             return "true"
         else:
             return "false"
@@ -26,9 +43,10 @@ def comparison(_text):
         else:
             return "false"
 
-    #This might apply for string or boolean too
     elif "==" in _text:
         _split = _text.split("==")
+
+        #if they are strings or boolean
         if _split[0] == _split[1]:
             return "true"
 
