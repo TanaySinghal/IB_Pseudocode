@@ -298,6 +298,7 @@ def doShell():
 def loopBlock(line):
     global line_number
 
+    #If we are within a loop, check for break and continue
     if loopSessionExists() and not reachedEndLoop(line):
         #if we break, then we break out of for loop
 
@@ -309,6 +310,7 @@ def loopBlock(line):
         if getContinueSession():
             return "continue"
 
+    #if the current line is starting a loop
     if isLoop(line):
         if loopType(line) == "for":
             loopVarName, _from, _to = getInfoFromForLoop(line)
@@ -330,6 +332,7 @@ def loopBlock(line):
             printError("This loop is invalid")
             return
 
+    #if the current line is ending the loop
     elif reachedEndLoop(line):
 
         if getBreakSession():
@@ -370,6 +373,7 @@ def loopBlock(line):
                 line_number = getLoopLineBegin()
             return "continue"
 
+    #TAG: Why is this here, and not in the beginning??
     elif breakCalled(line):
         setBreakSessionTrue()
 
@@ -384,6 +388,7 @@ def ifStatementBlock(_text):
         condition = getConditionFromIfStatement(_text)
         conditionIsTrue = comparison(condition)
         if conditionIsTrue is "true":
+            #the 0 here is the stage. 0 means if, 1 means else if, 2 means else
             addSession(0)
             setSessionTrue(0)
             return "continue"
