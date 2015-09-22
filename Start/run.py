@@ -238,7 +238,6 @@ def readFile():
         if loop_session == "continue":
             continue
 
-
         #IF
         current_session = ifStatementBlock(line)
         if current_session == "continue":
@@ -299,6 +298,17 @@ def doShell():
 def loopBlock(line):
     global line_number
 
+    if loopSessionExists() and not reachedEndLoop(line):
+        #if we break, then we break out of for loop
+
+        #ignore all other code in loop and exit when we reach end
+        if getBreakSession():
+            return "continue"
+
+        #ignore all other code within loop until we reach end
+        if getContinueSession():
+            return "continue"
+
     if isLoop(line):
         if loopType(line) == "for":
             loopVarName, _from, _to = getInfoFromForLoop(line)
@@ -321,6 +331,15 @@ def loopBlock(line):
             return
 
     elif reachedEndLoop(line):
+
+        if getBreakSession():
+            removeLoopSession()
+            return "continue"
+
+        if getContinueSession():
+            #check condition and then go back
+            setContinueSessionTo(False)
+
         _loopType = getLoopType()
 
         loopEndcondition = getLoopEndCondition()
@@ -351,6 +370,11 @@ def loopBlock(line):
                 line_number = getLoopLineBegin()
             return "continue"
 
+    elif breakCalled(line):
+        setBreakSessionTrue()
+
+    elif continueCalled(line):
+        setContinueSessionTo(True)
 
         printError("The loop was stored incorrectly. Something went seriously wrong.")
 
@@ -386,7 +410,8 @@ def ifStatementBlock(_text):
             if elseIfIsCalled(_text):
                 setSessionFalse(1)
                 return "continue"
-            #print "Reading code..."
+
+            #If we are inside if statement, read code
             readCode(_text)
             return "continue"
 
@@ -444,6 +469,9 @@ def readCode(_text):
     global inShell
 
     _inShell = inShell
+
+    #Check for loop session again??
+    #Maybe this will work
 
     #read output.. shell or not doesn't matter
     if printingOutput(_text):

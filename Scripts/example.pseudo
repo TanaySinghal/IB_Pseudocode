@@ -62,3 +62,32 @@ loop I from 1 to 5
 end loop
 
 output "After X: " + X
+
+//CONTINUE AND BREAK
+output ""
+output "Continue and break testing"
+
+X = 0
+Y = 0
+COUNT = 0
+
+output "Before X: " + X
+output "Before Y: " + Y
+output "Before COUNT: " + COUNT
+
+loop while COUNT < 5
+	X = X + COUNT
+	output "X is:" + X
+	if COUNT > 3 then
+		output "BROKEN OUT"
+		break
+		output "BROKEN OUT NOT SUCCESSFUL"
+	end if
+	Y = Y + COUNT
+	COUNT = COUNT + 1
+end loop
+
+output "BROKEN OUT SUCCESSFUL"
+output "After X: " + X
+output "After Y: " + Y
+output "After COUNT: " + COUNT

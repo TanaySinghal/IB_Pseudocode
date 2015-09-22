@@ -1,0 +1,15 @@
+output ""
+output "RUNNING IF EXAMPLE"
+X = 7
+
+if X > 10 then
+	output "X is greater than 10"
+
+else if X < 5 then
+	output "X is smaller than 5"
+
+else
+	output "X is between 5 and 10"
+
+end if
+output "DONE RUNNING IF EXAMPLE"

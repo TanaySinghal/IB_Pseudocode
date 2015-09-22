@@ -1,0 +1,10 @@
+output "RUNNING LOOP EXAMPLE"
+X = 0
+
+loop COUNT from 0 to 5
+	X = X + COUNT
+end loop
+
+output "Loop worked if X is 5"
+output "X: " + X
+output "DONE RUNNING LOOP EXAMPLE"

@@ -35,13 +35,18 @@ def addLoopSession(_line_number, _type, _varName, _endCondition, _lastIteration)
         'type': _type, 
         'varName': _varName,
         'endCondition': _endCondition,
-        'lastIteration': _lastIteration
+        'lastIteration': _lastIteration,
+        'break': False,
+        'continue': False
     }
 
     loopSessions.append(_dictionary)
 
 def withinWhileLoop():
     return len(loopSessions) > 0 and getLoopType() == "while"
+
+def loopSessionExists():
+    return len(loopSessions) > 0
 
 def getLoopLineBegin():
     #get last session
@@ -74,7 +79,7 @@ def removeLoopSession():
 
 def createForLoopCondition(_varName, _to):
     return _varName + "<" + _to
-    
+
 #Evaluation for loop condition
 def isLoopOver(_condition):
     from run import comparison
@@ -89,3 +94,35 @@ def reachedEndLoop(_text):
     if _text == "endloop":
         return True
     return False
+
+#BREAK and CONTINUE
+#get break and continue input
+def breakCalled(_text):
+    if _text == "break":
+        return True
+    return False
+
+def continueCalled(_text):
+    if _text == "continue":
+        return True
+    return False
+
+#get break and continue
+def getBreakSession():
+    _session = loopSessions[-1]
+    return _session['break']
+
+def getContinueSession():
+    _session = loopSessions[-1]
+    return _session['continue']
+
+#action break and continue
+def setBreakSessionTrue():
+    _session = loopSessions[-1]
+    _session['break'] = True
+    loopSessions[-1] = _session
+
+def setContinueSessionTo(_bool):
+    _session = loopSessions[-1]
+    _session['continue'] = _bool
+    loopSessions[-1] = _session
