@@ -1,3 +1,5 @@
+output ""
 output "RUNNING HELLO WORLD EXAMPLE"
 output "Hello world"
 output "DONE RUNNING HELLO WORLD EXAMPLE"
+output ""
