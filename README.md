@@ -8,4 +8,9 @@ Instructions to write scripts: <br/>
 Instructions to run scripts: <br/>
 1. From command lines, cd into folder "Start" <br/>
 2. Enter ```python run.py``` <br/>
-4. Enter name of file you want to run (e.g. ```hello```)
+3. Enter name of file you want to run (e.g. ```hello```)
+<br/>
+Instructions to enter shell: <br/>
+1. From command lines, cd into folder "Start" <br/>
+2. Enter ```python run.py``` <br/>
+3. Enter ```shell``` when prompted to run file
