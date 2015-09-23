@@ -1,5 +1,7 @@
 # IB_Pseudocode
 
+This project is meant for IB Computer Science students. It makes it possible to actually write and run IB Pseudocode on your laptop, instead of another programming language like Java. While learning programming and computational thinking, you will also master the IB approved pseudocode syntax. The "scripts" folder is where you write your .pseudo files, the "Documentation" folder is where you can see the IB approved pseudocode syntax, and the "Start" folder is where the python interpretor for this language is located. I have posted the instructions below to run and write code. You need to use command lines, so it is a good opportunity to become familiar with using it. <br/>
+
 Instructions to write scripts: <br/>
 1. Go into folder "Scripts"  <br/>
 2. Create a file with the format ".pseudo" (e.g. ```hello.pseudo```) <br/>
