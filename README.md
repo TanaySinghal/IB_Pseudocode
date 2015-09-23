@@ -26,6 +26,15 @@ Instructions to enter shell: <br/>
 3. Enter ```shell``` when prompted to run file <br/>
 
 <br/>
+Fully functional features: <br/>
+- Create/set variables (X = 10) <br/>
+- Output (output "Hello world") <br/>
+- Basic operations (3+3) <br/>
+- Basic comparisons (10 > 9) <br/>
+- If statement (and nested if statements) <br/>
+- For and while loops (nested allowed) <br/>
+
+<br/>
 Limitations: <br/>
 - No support yet for AND, OR, and NOT conditions <br/>
 - No support yet for multiple operations (can only do one operation per line) <br/>
